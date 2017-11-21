@@ -5,8 +5,10 @@
 
 string first_path(void);
 string second_path(void);
-short found_data(string path);
+bool found_data(string path);
 int find_chrome(void);
+string find_home_path(void);
+string find_drive(void);
 
 int main()
 {
@@ -17,7 +19,6 @@ int main()
         printf("Chrome not installed.\n");
         exit(1);
     }
-    printf("%d", path_option);
 
     return 0;
 }
@@ -27,12 +28,8 @@ string second_path(void)
     string drive, path, path2;
     int search_result;
 
-    drive = Concat(getenv("HOMEDRIVE"), "/");
-    path = getenv("HOMEPATH");
-    search_result = FindChar('\\', path, 1);
-    path2 = SubString(path, search_result + 1, StringLength(path) - 1);
-    path = SubString(path, 1, search_result - 1);
-    path = Concat(path,Concat("/", path2));
+    drive = find_drive();
+    path = find_home_path();
     return Concat(drive,Concat(path, "/Local Settings/Application Data/Google/Chrome/User Data/Default/Login Data"));
 
 }
@@ -42,12 +39,8 @@ string first_path(void)
     string drive, path, path2;
     int search_result;
 
-    drive = Concat(getenv("HOMEDRIVE"), "/");
-    path = getenv("HOMEPATH");
-    search_result = FindChar('\\', path, 1);
-    path2 = SubString(path, search_result + 1, StringLength(path) - 1);
-    path = SubString(path, 1, search_result - 1);
-    path = Concat(path,Concat("/", path2));
+    drive = find_drive();
+    path = find_home_path();
     return Concat(drive,Concat(path, "/AppData/Local/Google/Chrome/User Data/Default/Login Data"));
 
 }
@@ -61,11 +54,27 @@ int find_chrome(void)
     return 0;
 }
 
-short found_data(string path)
+bool found_data(string path)
 {
     FILE *exist;
     exist = fopen(path, "r");
     if(exist == NULL)
-        return 0;
-    return 1;
+        return FALSE;
+    return TRUE;
+}
+string find_drive(void)
+{
+    return Concat(getenv("HOMEDRIVE"), "/");
+}
+
+string find_home_path(void)
+{
+    string path, path2;
+    int search_result;
+
+    path = getenv("HOMEPATH");
+    search_result = FindChar('\\', path, 1);
+    path2 = SubString(path, search_result + 1, StringLength(path) - 1);
+    path = SubString(path, 1, search_result - 1);
+    return Concat(path,Concat("/", path2));
 }
