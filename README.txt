@@ -1,0 +1,1 @@
+Βάλε το crypt32.lib στα linker settings αλλιως για καποιο λογο δεν δουλευει το header file wincrypt.h.
